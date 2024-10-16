@@ -4,6 +4,8 @@ import { values } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import * as Yup from 'yup'
 import Toast from './Toast'
+const apiUrl = import.meta.env.VITE_API_URL
+
 const validationSchema=Yup.object({
     email:Yup.string().email('invalid email address').required('email is required')
 })
@@ -13,7 +15,7 @@ const ForgotPasswordForm = () => {
 
    async function handleSubmit(values){
         try{
-            const response=await axios.post('http://localhost:5000/api/auth/forgot-password',values)
+            const response=await axios.post(`${apiUrl}auth/forgot-password`,values)
             if(response.status===200){
            setSuccessMessage(response.data.message)
             }

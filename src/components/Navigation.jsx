@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import ForgotPasswordForm from './ForgotPasswordForm'
 import { IoHeartOutline } from "react-icons/io5";
 import axios from 'axios'
+const apiUrl = import.meta.env.VITE_API_URL
 
 const Navigation = () => {
   const auth = useSelector((state) => state.auth)
@@ -40,7 +41,7 @@ const Navigation = () => {
           'Authorization':`Bearer ${token}`
         }
 
-        const response=await axios.get('http://localhost:5000/api/wishlist',{headers})
+        const response=await axios.get(`${apiUrl}wishlist`,{headers})
 
         if(response.status===200){
          localStorage.setItem('wishlist',JSON.stringify(response.data.items))

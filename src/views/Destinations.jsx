@@ -8,6 +8,9 @@ import { IoSearch } from "react-icons/io5";
 import axios from 'axios'
 import { debounce } from 'lodash'
 import { Link } from 'react-router-dom'
+const apiUrl = import.meta.env.VITE_API_URL
+
+
 const Destinations = () => {
   const [listOfState, setListOfState] = useState([])
 
@@ -16,7 +19,7 @@ const Destinations = () => {
 
   async function fetchState() {
     try {
-      const response = await axios.get(`http://localhost:5000/api/destinations?limit=${itemLimit}`)
+      const response = await axios.get(`${apiUrl}destinations?limit=${itemLimit}`)
       if (response.status === 200) {
         setListOfState(response.data)
         console.log(response.data)
@@ -38,7 +41,7 @@ const Destinations = () => {
   const debounceApiCall = useCallback(
     debounce(async (searchItem) => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/destinations?search=${searchItem}`)
+        const response = await axios.get(`${apiUrl}destinations?search=${searchItem}`)
         if (response.status === 200) {
           setListOfState(response.data)
         }

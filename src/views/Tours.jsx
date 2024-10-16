@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom'
 import { IoIosArrowRoundForward } from "react-icons/io";
 
 import { IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
+const apiUrl = import.meta.env.VITE_API_URL
+
 
 
 const Tours = () => {
@@ -20,7 +22,7 @@ const Tours = () => {
     async function fetchData() {
         try {
             if (slug) {
-                const response = await axios.get(`http://localhost:5000/api/tours-for-destination/${slug}`)
+                const response = await axios.get(`${apiUrl}tours-for-destination/${slug}`)
                 if (response.status === 200) {
                     setTourslist(response.data)
                     setLoading(false)
@@ -33,7 +35,7 @@ const Tours = () => {
     }
     async function fetchState() {
         try {
-            const response = await axios.get('http://localhost:5000/api/destinations?limit=50')
+            const response = await axios.get(`${apiUrl}destinations?limit=50`)
             if (response.status === 200) {
                 setListOfState(response.data)
                 console.log(response.data)

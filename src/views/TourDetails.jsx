@@ -18,6 +18,7 @@ import * as Yup from 'yup'
 import { Navigate } from 'react-router-dom';
 import Toast from '../components/Toast';
 import { GoHeartFill } from "react-icons/go";
+const apiUrl = import.meta.env.VITE_API_URL
 
 
 const validationSchema = Yup.object({
@@ -50,7 +51,7 @@ const TourDetails = () => {
     async function fetchDetails() {
         try {
             if (slug) {
-                const response = await axios.get(`http://localhost:5000/api/tours/${slug}`)
+                const response = await axios.get(`${apiUrl}tours/${slug}`)
                 // console.log("hii")
                 if (response.status == 200) {
                     setDetails(response.data)
@@ -87,28 +88,30 @@ const TourDetails = () => {
     }
 
     async function addItemToWishList() {
-        setSuccessMessage("")
-
         try {
             const loggedUser = JSON.parse(localStorage.getItem("traveluser"))
-
+            if (!loggedUser) {
+                setTimeout(() => setErrorMessage('Please login first'), 0);
+                return;
+            }
             const { token } = loggedUser
-
             const headers = {
                 'Authorization': `Bearer ${token}`
             }
-
-            const response = await axios.post('http://localhost:5000/api/wishlist', {
+            const response = await axios.post(`${apiUrl}wishlist`, {
                 tourId: details._id
             }, { headers })
             if (response.status === 200) {
-                setSuccessMessage(response.data.message)
+                setTimeout(() => setSuccessMessage(response.data.message), 0);
+                // setSuccessMessage(response.data.message)
                 setAddToItem(true)
             }
-        }
-
-        catch (error) {
-            setErrorMessage(error.message)
+        } catch (error) {
+            setTimeout(() => setErrorMessage(error.message), 0);
+            // setErrorMessage(error.message)
+        } finally {
+            setSuccessMessage("")
+            setErrorMessage("")
         }
     }
 
@@ -117,27 +120,39 @@ const TourDetails = () => {
         try {
             const loggedUser = JSON.parse(localStorage.getItem("traveluser"))
 
+            if (!loggedUser) {
+                setTimeout(() => setErrorMessage('Please login first'), 0);
+                return;
+            }
+
             const { token } = loggedUser
 
             const headers = {
                 'Authorization': `Bearer ${token}`
             }
 
-            const response = await axios.post('http://localhost:5000/api/wishlist/remove', {
+            const response = await axios.post(`${apiUrl}wishlist/remove`, {
                 tourId: details._id
             }, { headers })
 
             if (response.status === 200) {
                 console.log(response.data.message);
 
-                setSuccessMessage(response.data.message)
+                setTimeout(() => setSuccessMessage(response.data.message), 0);
+
+                // setSuccessMessage(response.data.message)
                 setAddToItem(false)
             }
 
         }
         catch (error) {
             console.log(error.message)
-            setErrorMessage(error.message)
+            setTimeout(() => setErrorMessage(error.message), 0);
+            // setErrorMessage(error.message)
+        }
+        finally {
+            setSuccessMessage("")
+            setErrorMessage("")
         }
     }
 
@@ -399,12 +414,3 @@ const TourDetails = () => {
 }
 
 export default TourDetails
-
-{/* <div className="mb-3">
-                                    <label htmlFor="senior" className="form-label">Senior Citizen (80-100 years)</label>
-                                    <input type="number" className="form-control" name="senior" id="senior" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="child" className="form-label">Child (4-18 years)</label>
-                                    <input type="number" className="form-control" name="child" id="child" />
-                                </div> */}

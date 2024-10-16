@@ -1,5 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import axios from 'axios'
+const apiUrl = import.meta.env.VITE_API_URL
 
 const Bookings = () => {
     const [showData,setShowData]=useState([])
@@ -14,7 +15,7 @@ const Bookings = () => {
         
             }
 
-            const response=await axios.get('http://localhost:5000/api/customer/my-bookings',{headers})
+            const response=await axios.get(`${apiUrl}`,{headers})
             console.log(response)
             if(response.status===200){
               setShowData(response.data.bookings)

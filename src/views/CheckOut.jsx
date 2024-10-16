@@ -6,6 +6,8 @@ import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Toast from '../components/Toast';
+const apiUrl = import.meta.env.VITE_API_URL
+
 // import ThankyouPage from './ThankyouPage';
 const validationSchema = Yup.object({
     firstname: Yup.string().required(),
@@ -68,7 +70,7 @@ const CheckOut = () => {
                 },
                 tour: bookingDetails.id
             }
-            const response = await axios.post(`http://localhost:5000/api/bookings`, requestBody, { headers })
+            const response = await axios.post(`${apiUrl}bookings`, requestBody, { headers })
             // console.log(response.data)
             navigate("/thankyoupage", { replace: true, state: { ref: response.data.ref } })
         } catch (error) {

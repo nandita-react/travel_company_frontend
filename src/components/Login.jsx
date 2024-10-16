@@ -8,6 +8,8 @@ import { VscEyeClosed } from "react-icons/vsc";
 import axios from 'axios';
 import Toast from './Toast';
 import { useDispatch } from 'react-redux';
+const apiUrl = import.meta.env.VITE_API_URL
+
 
 const validationSchema = Yup.object({
     email: Yup.string().email('invalid email address').required('email is required'),
@@ -23,7 +25,7 @@ const Login = () => {
 
     async function handleSubmit(values) {
         try {
-            const response = await axios.post('http://localhost:5000/api/login', values)
+            const response = await axios.post(`${apiUrl}login`, values)
             console.log(response)
             if (response.status === 200) {
                 localStorage.setItem("traveluser", JSON.stringify(response.data))

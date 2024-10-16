@@ -8,6 +8,7 @@ import { VscEye } from "react-icons/vsc";
 import { VscEyeClosed } from "react-icons/vsc";
 import axios from 'axios';
 import Toast from './Toast';
+const apiUrl = import.meta.env.VITE_API_URL
 
 
 const validationSchema = Yup.object({
@@ -26,7 +27,7 @@ const Signup = ({ setShowForm }) => {
 
     async function handleSubmit(values) {
         try {
-            const response = await axios.post('http://localhost:5000/api/signup', values)
+            const response = await axios.post(`${apiUrl}signup`, values)
             console.log(response)
             if (response.status === 200) {
                 setSuccessMessage("Signup successful")

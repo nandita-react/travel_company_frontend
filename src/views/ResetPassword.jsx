@@ -6,6 +6,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import { useNavigate } from 'react-router-dom'
 import { values } from 'lodash'
+const apiUrl = import.meta.env.VITE_API_URL
+
 const validationSchema = Yup.object({
   newpassword: Yup.string().required('newpassword is required'),
   confirmpassword: Yup.string()
@@ -24,7 +26,7 @@ const ResetPassword = () => {
   async function fetchData() {
     try {
       if (token) {
-        const response = await axios.post('http://localhost:5000/api/auth/verify-reset-password-token', {
+        const response = await axios.post(`${apiUrl}auth/verify-reset-password-token`, {
           resetToken: token
         })
 
@@ -52,7 +54,7 @@ const ResetPassword = () => {
 
   async function handleSubmit(values) {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/reset-password', {
+      const response = await axios.post(`${apiUrl}auth/reset-password`, {
         resetToken: token,
         newPassword: values.newpassword
       })
