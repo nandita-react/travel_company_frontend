@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
-import authReducer from "./authReducer";
+import authReducers from "./authReducer";
 import wishlistReducer from "./WishllistReducer";
 import toastReducers from "./ToastReducer";
 
 const rootReducer = combineReducers({
-    auth: authReducer,
+    auth: authReducers,
     wishlist: wishlistReducer,
     toast:toastReducers
 })

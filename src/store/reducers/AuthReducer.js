@@ -7,7 +7,7 @@ const initialState={
     user:userData ? JSON.parse(userData) :null
 }
 
-const authReducer=(state=initialState,action)=>{
+const authReducers=(state=initialState,action)=>{
     switch(action.type){
         case LOGIN:
             return{
@@ -25,4 +25,4 @@ const authReducer=(state=initialState,action)=>{
             return state        
     }
 }
-export default authReducer
+export default authReducers
