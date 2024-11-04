@@ -65,6 +65,7 @@ const TourDetails = () => {
     };
 
     async function fetchDetails() {
+        
         try {
             if (slug) {
                 const response = await axios.get(`${apiUrl}tours/${slug}`)
