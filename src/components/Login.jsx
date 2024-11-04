@@ -1,15 +1,10 @@
 import { Field, Form, Formik, ErrorMessage } from 'formik';
 import React, { useState } from 'react'
 import * as Yup from 'yup'
-
-import { Link } from 'react-router-dom';
 import { VscEye } from "react-icons/vsc";
 import { VscEyeClosed } from "react-icons/vsc";
-import axios from 'axios';
-import Toast from './Toast';
 import { useDispatch } from 'react-redux';
-const apiUrl = import.meta.env.VITE_API_URL
-
+import {login} from '../store/actions/authActions'
 
 const validationSchema = Yup.object({
     email: Yup.string().email('invalid email address').required('email is required'),
@@ -17,47 +12,17 @@ const validationSchema = Yup.object({
 })
 
 const Login = () => {
-    const [showPassword, setShowPassword] = useState(false)
-    const [errorMessage, setErrorMessage] = useState("")
-    const [successMessage, setSuccessMessage] = useState("")
 
+    const [showPassword, setShowPassword] = useState(false)
     const dispatch = useDispatch()
 
-    async function handleSubmit(values) {
-        try {
-            const response = await axios.post(`${apiUrl}login`, values)
-            console.log(response)
-            if (response.status === 200) {
-                localStorage.setItem("traveluser", JSON.stringify(response.data))
-                // alert('Login Sucessful.....')
-                dispatch({
-                    type: 'LOGIN', payload: {
-                        name: response.data.name,
-                        avatar: response.data.avatar
-                    }
-                })
-                setSuccessMessage("Signin successful")
-            }
-            else {
-                // alert(response.data.message)
-                setErrorMessage(response.data.message)
-            }
-        }
-        catch (error) {
-            // alert(error.message)
-            setErrorMessage(error.message)
-        }
-
-    }
-
     return (
-
         <>
             <Formik
                 initialValues={{ email: '', password: '' }}
                 validationSchema={validationSchema}
                 onSubmit={(values, { resetForm }) => {
-                    handleSubmit(values)
+                    dispatch(login(values))
                     resetForm()
                 }}
             >
@@ -78,22 +43,9 @@ const Login = () => {
                             <ErrorMessage name="password" component="small" className='text-danger' />
                         </div>
                         <button className="btn btn-primary w-100 py-2" type="submit" disabled={isSubmitting}>Login</button>
-                        {/* <p className='text-center my-3'> Don't have an account? <Link to="/signup" >Signup</Link></p> */}
                     </Form>)}
             </Formik>
-            {/* <p className='mt-2 text-danger' data-bs-toggle="modal" data-bs-target="#forgotpassword" >Forgot Password</p> */}
             <button className="btn border border-0 text-danger" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">Forgot Password</button>
-
-
-
-
-            {
-                errorMessage && <Toast error={errorMessage} />
-            }
-            {
-                successMessage && <Toast success={successMessage} />
-            }
-
         </>
     )
 }

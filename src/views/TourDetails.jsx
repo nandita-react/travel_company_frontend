@@ -18,6 +18,8 @@ import * as Yup from 'yup'
 import { Navigate } from 'react-router-dom';
 import Toast from '../components/Toast';
 import { GoHeartFill } from "react-icons/go";
+import { addToWishlist,removeWishlist } from '../store/actions/wishlistActions';
+import { useDispatch, useSelector } from 'react-redux';
 const apiUrl = import.meta.env.VITE_API_URL
 
 
@@ -47,6 +49,20 @@ const TourDetails = () => {
     // const [totalAmount,setTotalAmount]=useState(0)
 
     const [addToItem, setAddToItem] = useState(false)
+
+    const wishlist = useSelector((state) => state.wishlist.items)
+    const dispatch=useDispatch()
+
+   
+
+    const handleAddToWishlist = () => {
+      
+        
+        dispatch(addToWishlist(details._id)); // Now this will call the API
+    };
+    const handleRemoveWishlist = () => {
+        dispatch(removeWishlist(details._id)); // Now this will call the API
+    };
 
     async function fetchDetails() {
         try {
@@ -87,74 +103,48 @@ const TourDetails = () => {
 
     }
 
-    async function addItemToWishList() {
-        try {
-            const loggedUser = JSON.parse(localStorage.getItem("traveluser"))
-            if (!loggedUser) {
-                setTimeout(() => setErrorMessage('Please login first'), 0);
-                return;
-            }
-            const { token } = loggedUser
-            const headers = {
-                'Authorization': `Bearer ${token}`
-            }
-            const response = await axios.post(`${apiUrl}wishlist`, {
-                tourId: details._id
-            }, { headers })
-            if (response.status === 200) {
-                setTimeout(() => setSuccessMessage(response.data.message), 0);
-                // setSuccessMessage(response.data.message)
-                setAddToItem(true)
-            }
-        } catch (error) {
-            setTimeout(() => setErrorMessage(error.message), 0);
-            // setErrorMessage(error.message)
-        } finally {
-            setSuccessMessage("")
-            setErrorMessage("")
-        }
-    }
 
-    async function removeToWishList() {
-        setSuccessMessage("")
-        try {
-            const loggedUser = JSON.parse(localStorage.getItem("traveluser"))
 
-            if (!loggedUser) {
-                setTimeout(() => setErrorMessage('Please login first'), 0);
-                return;
-            }
+    // async function removeToWishList() {
+    //     setSuccessMessage("")
+    //     try {
+    //         const loggedUser = JSON.parse(localStorage.getItem("traveluser"))
 
-            const { token } = loggedUser
+    //         if (!loggedUser) {
+    //             setTimeout(() => setErrorMessage('Please login first'), 0);
+    //             return;
+    //         }
 
-            const headers = {
-                'Authorization': `Bearer ${token}`
-            }
+    //         const { token } = loggedUser
 
-            const response = await axios.post(`${apiUrl}wishlist/remove`, {
-                tourId: details._id
-            }, { headers })
+    //         const headers = {
+    //             'Authorization': `Bearer ${token}`
+    //         }
 
-            if (response.status === 200) {
-                console.log(response.data.message);
+    //         const response = await axios.post(`${apiUrl}wishlist/remove`, {
+    //             tourId: details._id
+    //         }, { headers })
 
-                setTimeout(() => setSuccessMessage(response.data.message), 0);
+    //         if (response.status === 200) {
+    //             console.log(response.data.message);
 
-                // setSuccessMessage(response.data.message)
-                setAddToItem(false)
-            }
+    //             setTimeout(() => setSuccessMessage(response.data.message), 0);
 
-        }
-        catch (error) {
-            console.log(error.message)
-            setTimeout(() => setErrorMessage(error.message), 0);
-            // setErrorMessage(error.message)
-        }
-        finally {
-            setSuccessMessage("")
-            setErrorMessage("")
-        }
-    }
+    //             // setSuccessMessage(response.data.message)
+    //             setAddToItem(false)
+    //         }
+
+    //     }
+    //     catch (error) {
+    //         console.log(error.message)
+    //         setTimeout(() => setErrorMessage(error.message), 0);
+    //         // setErrorMessage(error.message)
+    //     }
+    //     finally {
+    //         setSuccessMessage("")
+    //         setErrorMessage("")
+    //     }
+    // }
 
 
 
@@ -229,8 +219,11 @@ const TourDetails = () => {
                             <div className='w-50 text-end'>
                                 <span className='ps-4'><GoShareAndroid className='text-primary fs-5' /><small className='ps-2'>Share</small></span>
                                 <span className='ps-4'><MdOutlineReviews className='text-primary fs-5' /><small className='ps-2'>Review</small></span>
-                                <span className='ps-4'>{addToItem ? <GoHeartFill className='text-primary fs-5' onClick={removeToWishList} /> :
-                                    <GoHeart className='text-primary fs-5' onClick={addItemToWishList} />}
+                                <span className='ps-4'>
+                                    {wishlist && wishlist.includes(details._id) ?
+                                        <GoHeartFill className='text-primary fs-5' onClick={handleRemoveWishlist} /> :
+                                        <GoHeart className='text-primary fs-5' onClick={handleAddToWishlist} />
+                                    }
                                     <small className='ps-2'>Wishlist</small></span>
                             </div>
                         </div>

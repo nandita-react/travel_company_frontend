@@ -1,19 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import Login from './Login'
 import Signup from './SignUp'
 import SocialLogin from './SocialLogin'
 import { useDispatch, useSelector } from 'react-redux'
 import ForgotPasswordForm from './ForgotPasswordForm'
 import { IoHeartOutline } from "react-icons/io5";
+import { logout } from '../store/actions/authActions'
 import axios from 'axios'
+import { fetchWishlist } from '../store/actions/wishlistActions'
 const apiUrl = import.meta.env.VITE_API_URL
 
 const Navigation = () => {
   const auth = useSelector((state) => state.auth)
+  const wishlistItems = useSelector((state) => state.wishlist.items)
   const dispatch = useDispatch()
   const modalRef = useRef(null);
-
+  const navigate=useNavigate()
   // console.log(auth)
   const [showForm, setShowForm] = useState('login')
   // const [travellingUser, setTravellingUser] = useState("")
@@ -30,37 +33,18 @@ const Navigation = () => {
   //   }
   // }
 
-    async function Wishlistdata(){
-      try{
-        const loggedUser=JSON.parse(localStorage.getItem("traveluser"))
-
-        const {token}=loggedUser
-        
-
-        const headers={
-          'Authorization':`Bearer ${token}`
-        }
-
-        const response=await axios.get(`${apiUrl}wishlist`,{headers})
-
-        if(response.status===200){
-         localStorage.setItem('wishlist',JSON.stringify(response.data.items))
-        }
-      }
-
-      catch(error){
-        console.log(error.message)
-      }
-    }
 
   function handleLogout() {
-    dispatch({ type: 'LOGOUT' })
+    dispatch(logout())
   }
 
   useEffect(() => {
-    if (auth.isLoggedIn) {
-      Wishlistdata()
+    // console.log(auth.user);
+
+    if (auth.isAuthenticated) {
+      // Wishlistdata()
       modalRef.current.click();
+      dispatch(fetchWishlist())
     }
   }, [auth])
 
@@ -71,6 +55,10 @@ const Navigation = () => {
 
   //   return () => clearInterval(interval); // Cleanup on component unmount
   // }, []);
+  
+   function handleWishlistShow(){
+      navigate('/wishlist')
+   }
 
   return (
     <>
@@ -92,23 +80,22 @@ const Navigation = () => {
               <li className="nav-item">
                 <a className="nav-link" href="#">Gallery</a>
               </li>
-              <li className="nav-item">
-                <NavLink className="position-relative " to="/wishlist"><IoHeartOutline className=' mt-2 fs-3 mx-2 ' />
-                  <span className="position-absolute translate-middle badge rounded-circle bg-primary"  style={{top:'20%', left:'80%'}}>
-                    2
+              {auth.isAuthenticated && (<li className="nav-item">
+                <NavLink className="position-relative " to="/wishlist"><IoHeartOutline className=' mt-2 fs-3 mx-2 ' onClick={handleWishlistShow}/>
+                  <span className="position-absolute translate-middle badge rounded-circle bg-primary" style={{ top: '20%', left: '80%' }}>
+                    {wishlistItems.length  }
                   </span>
-
                 </NavLink>
-              </li>
+              </li>)}
               {
-                auth.isLoggedIn ? (
+                auth.isAuthenticated ? (
                   <li className="nav-item dropdown">
                     <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                       Hello, {auth.user.name}
                     </a>
                     <ul className="dropdown-menu">
                       <li><Link className="dropdown-item" to="/myDashboard">Dashboard</Link></li>
-                      
+
                       {/* <li><a className="dropdown-item" href="#">Another action</a></li> */}
                       <li><hr className="dropdown-divider" /></li>
                       <li><a className="dropdown-item" onClick={handleLogout}>Logout</a></li>

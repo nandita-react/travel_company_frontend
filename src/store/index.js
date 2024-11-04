@@ -1,5 +1,13 @@
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
+import { thunk } from 'redux-thunk'
 import rootReducer from "./reducers";
- const store=createStore(rootReducer)
+import { loadwishlistFromLocalStorage,saveWishlistToLocalStorage } from "../utils/localStorage";
 
- export default store
+const persistedWishlist = loadwishlistFromLocalStorage()
+const store = createStore(
+    rootReducer,
+    { wishlist: { wishlistItems: persistedWishlist || [] } },
+    applyMiddleware(thunk)
+)
+
+export default store
